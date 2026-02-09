@@ -29,13 +29,15 @@ label {
 }
 /* Intensity display styling */
 #electricValue {
-    color: #e74c3c; /* red for electric field */
+      color: #3498db; /* blue for electric field */
+  
     font-weight: bold;
     margin-left: 4px;
 }
 
 #magneticValue {
-    color: #3498db; /* blue for magnetic field */
+      color: #e74c3c; /* red for magnetic field */
+  
     font-weight: bold;
     margin-left: 4px;
 }
@@ -51,6 +53,35 @@ input[type="range"] {
   width: 300px;
 }
 
+
+
+/* Legend styling */
+#legend {
+  display: flex;
+  margin: 10px 0;
+}
+
+.legend-item {
+  margin-right: 16px;
+  font-weight: bold;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+  border: 1px solid #ccc;
+}
+
+.legend-color.electric {
+  background-color: #3498db;
+}
+
+.legend-color.magnetic {
+  background-color: #e74c3c;
+}
 input[type="checkbox"] {
   margin-left: 10px;
 }
+
