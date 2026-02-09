@@ -27,6 +27,24 @@ label {
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+/* Intensity display styling */
+#electricValue {
+    color: #e74c3c; /* red for electric field */
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+#magneticValue {
+    color: #3498db; /* blue for magnetic field */
+    font-weight: bold;
+    margin-left: 4px;
+}
+
+/* Container for intensity paragraphs */
+p {
+    margin: 5px 0;
+}
+
 
 /* Checkbox and slider styling */
 input[type="range"] {
