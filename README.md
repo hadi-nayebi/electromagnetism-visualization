@@ -12,6 +12,8 @@ A stationary charge produces an **electric field** (displayed as blue radial lin
 4. Check or uncheck the **Show electric field** and **Show magnetic field** boxes to toggle the fields on or off.
 
 The canvas will update automatically as you move the slider or toggle the checkboxes.
+5. Observe the **Electric intensity** and **Magnetic intensity** values displayed below the controls. These values update automatically as you adjust the observer speed and toggle the fields on or off.
+
 
 If you are viewing this repository on GitHub, you can click on `index.html` and choose **"View raw"** or open it in GitHub Pages to interact with the simulation.
 
@@ -19,7 +21,7 @@ If you are viewing this repository on GitHub, you can click on `index.html` and 
 
 According to Maxwell's equations and Einstein's theory of special relativity, electricity and magnetism are two aspects of a unified electromagnetic field. A charge at rest generates a pure electric field. When the charge moves, or when you change your frame of reference, part of that electric field appears as a magnetic field.
 
-This visualization provides a qualitative demonstration of that idea: as you increase the observer speed, the electric (blue) lines shrink in length while concentric magnetic (red) rings become more prominent. The simulation is simplified and not a rigorous physical model, but it helps convey the relationship between the fields.
+This visualization provides a qualitative demonstration of that idea: as you increase the observer speed, the electric (blue) lines shrink in length while concentric magnetic (red) rings become more prominent. The simulation is simplified and not a rigorous physical model, but it helps convey the relationship  The relative intensities of the electric and magnetic fields are displayed below the controls, illustrating how energy shifts between the two components as the observer speed changes.between the fields.
 
 ## Contributing
 
