@@ -1,0 +1,17 @@
+# Ignore macOS system files
+.DS_Store
+
+# Ignore node modules and logs
+node_modules/
+npm-debug.log*
+
+# Ignore build artifacts
+/dist/
+
+# Ignore local environment files
+.env
+
+# Ignore coverage reports
+coverage/
+
+# Additional patterns for future development can be added here.
