@@ -11,6 +11,16 @@ const showMagnetic = document.getElementById('showMagnetic');
 const electricValue = document.getElementById('electricValue');
 const magneticValue = document.getElementById('magneticValue');
 
+// Create legend dynamically and insert after controls
+const controls = document.getElementById('controls');
+if (controls && !document.getElementById('legend')) {
+  const legend = document.createElement('div');
+  legend.id = 'legend';
+  legend.innerHTML = '<span class="legend-item"><span class="legend-color electric"></span> Electric Field</span> <span class="legend-item"><span class="legend-color magnetic"></span> Magnetic Field</span>';
+  controls.insertAdjacentElement('afterend', legend);
+}
+
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
