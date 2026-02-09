@@ -11,8 +11,12 @@ A stationary charge produces an **electric field** (displayed as blue radial lin
 3. Use the **Observer relative speed** slider to adjust your frame of reference. `0.0` means you are at rest relative to the charge, `1.0` is a relativistic speed (close to the speed of light).
 4. Check or uncheck the **Show electric field** and **Show magnetic field** boxes to toggle the fields on or off.
 
-The canvas will update automatically as you move the slider or toggle the checkboxes.
-5. Observe the **Electric intensity** and **Magnetic intensity** values displayed below the controls. These values update automatically as you adjust the observer speed and toggle the fields on or off.
+
+
+5. Observe the **Electric intensity** and **Magnetic intensity** values displayed below the controls. These values update automatically as you adjust the observe speed and toggle the fields on or off.
+
+The canvas will update automatically as you move the slider or change the checkboxes.
+
 
 
 If you are viewing this repository on GitHub, you can click on `index.html` and choose **"View raw"** or open it in GitHub Pages to interact with the simulation.
