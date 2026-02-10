@@ -39,6 +39,11 @@
       margin-bottom:12px;
       font-size:13px;
     }
+    .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
     .card{
       background:var(--panel);
       border:1px solid var(--line);
@@ -92,7 +97,7 @@
     canvas{
       width:100%;
       height:420px;
-      background:#0a0f1a;
+      background: #0a0f1a;
       border:1px solid var(--line);
       border-radius:12px;
     }
@@ -107,17 +112,13 @@
     }
     .swatch{
       display:inline-block;
-      width:12px;
-      height:12px;
-      border-radius:3px;
+      width:12px;height:12px;border-radius:3px;
       margin-right:6px;
       vertical-align:-2px;
     }
     .dot{
       display:inline-block;
-      width:12px;
-      height:12px;
-      border-radius:50%;
+      width:12px;height:12px;border-radius:50%;
       margin-right:6px;
       vertical-align:-2px;
       border:1px solid rgba(255,255,255,.18);
@@ -125,24 +126,19 @@
     .readout{
       margin-top:10px;
       display:grid;
-      grid-template-columns:1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap:8px 12px;
       font-size:12px;
       color:var(--muted);
     }
-    .mono{
-      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      color:var(--text);
-    }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; color: var(--text); }
     .hint{
       margin-top:10px;
       font-size:12px;
       color:var(--muted);
       line-height:1.35;
     }
-    .ok{
-      color:var(--good);
-    }
+    .ok{ color: var(--good); }
     @media (max-width: 900px){
       .canvas-wrap{ grid-template-columns:1fr; }
       .readout{ grid-template-columns:1fr; }
@@ -157,6 +153,7 @@
       Left panel = lab frame. Right panel = an observer moving at speed β<sub>obs</sub> along x. A moving charge generates E and B;
       a Lorentz boost mixes them. This is the concrete version of what you were asking.
     </div>
+
     <div class="card">
       <div class="controls">
         <div class="control">
@@ -166,6 +163,7 @@
           </label>
           <input id="beta" type="range" min="-0.95" max="0.95" step="0.01" value="0.60"/>
         </div>
+
         <div class="control">
           <label>
             <span>Observer speed β<sub>obs</sub> (boost along x)</span>
@@ -173,6 +171,7 @@
           </label>
           <input id="bObs" type="range" min="-0.95" max="0.95" step="0.01" value="0.00"/>
         </div>
+
         <div class="control">
           <label>
             <span>Field arrow density</span>
@@ -180,6 +179,7 @@
           </label>
           <input id="density" type="range" min="10" max="28" step="1" value="18"/>
         </div>
+
         <div class="control">
           <label>
             <span>Arrow scaling (visual only)</span>
@@ -188,12 +188,14 @@
           <input id="scale" type="range" min="0.6" max="2.0" step="0.05" value="1.1"/>
         </div>
       </div>
+
       <div class="toggles">
         <label><input id="showE" type="checkbox" checked> Show E vectors (blue)</label>
         <label><input id="showB" type="checkbox" checked> Show B (out-of-page dots)</label>
         <label><input id="showGrid" type="checkbox" checked> Show grid</label>
         <label><input id="animate" type="checkbox" checked> Animate charge motion</label>
       </div>
+
       <div class="canvas-wrap" style="margin-top:10px;">
         <div>
           <div class="sub" style="margin:6px 0 8px 4px;">Lab frame: fields around a charge moving at β</div>
@@ -204,17 +206,20 @@
           <canvas id="cObs" width="900" height="520"></canvas>
         </div>
       </div>
+
       <div class="legend">
         <span><span class="swatch" style="background:var(--blue)"></span>E field vectors</span>
-        <span><span class="dot" style="background:var(--orange)"></span>B out of page: ⨀ (positive), ⨂ (negative)</span>
+        <span><span class="dot" style="background:var(--orange)"></span>B out of page: ⊘ (positive), ⊗ (negative)</span>
         <span class="ok">Probe point is draggable (green). Compare E,B vs E’,B’ numerically.</span>
       </div>
+
       <div class="readout">
         <div>Probe position (x,y): <span class="mono" id="pTxt"></span></div>
         <div>Charge position (x,y): <span class="mono" id="qTxt"></span></div>
         <div>Lab: |E|, Bz: <span class="mono" id="labTxt"></span></div>
         <div>Observer: |E’|, Bz’: <span class="mono" id="obsTxt"></span></div>
       </div>
+
       <div class="hint">
         What to look for: increase |β| and the E field “pancakes” sideways (stronger perpendicular to motion).
         B appears automatically from motion (not a separate knob). Now move β<sub>obs</sub>:
@@ -222,14 +227,17 @@
       </div>
     </div>
   </div>
-  <script>
+
+<script>
 (() => {
   // Units: set c = 1, k*q = 1 for display. We visualize a 2D slice (x-y plane).
   // Charge moves along x. Magnetic field is out-of-plane (Bz).
+
   const cLab = document.getElementById("cLab");
   const cObs = document.getElementById("cObs");
   const ctxL = cLab.getContext("2d");
   const ctxO = cObs.getContext("2d");
+
   const betaEl = document.getElementById("beta");
   const bObsEl = document.getElementById("bObs");
   const densEl = document.getElementById("density");
@@ -238,18 +246,23 @@
   const showBEl = document.getElementById("showB");
   const showGridEl = document.getElementById("showGrid");
   const animEl = document.getElementById("animate");
+
   const betaTxt = document.getElementById("betaTxt");
   const bObsTxt = document.getElementById("bObsTxt");
   const densTxt = document.getElementById("densTxt");
   const scaleTxt = document.getElementById("scaleTxt");
+
   const pTxt = document.getElementById("pTxt");
   const qTxt = document.getElementById("qTxt");
   const labTxt = document.getElementById("labTxt");
   const obsTxt = document.getElementById("obsTxt");
+
   // World coordinates mapped to canvas.
   // World box: x ∈ [-3, 3], y ∈ [-2, 2]
   const world = { xmin:-3, xmax:3, ymin:-2, ymax:2 };
+
   function gamma(beta){ return 1 / Math.sqrt(1 - beta*beta); }
+
   function w2c(canvas, x, y){
     const W = canvas.width, H = canvas.height;
     const u = (x - world.xmin)/(world.xmax - world.xmin);
@@ -265,6 +278,7 @@
       y: world.ymin + v*(world.ymax - world.ymin)
     };
   }
+
   // Probe point (draggable)
   let probe = { x: 1.2, y: 0.8 };
   let dragging = false;
@@ -291,6 +305,7 @@
   }
   attachDrag(cLab);
   attachDrag(cObs);
+
   // Field of a uniformly moving charge in lab frame (constant velocity along x).
   // Using known closed form:
   // E = (1 - β^2) * r / [ (r^2 - (β×r)^2)^(3/2) ]  (in c=1, kq=1)
@@ -301,27 +316,36 @@
   function fieldsLabAtPoint(beta, qpos, x, y){
     const rx = x - qpos.x;
     const ry = y - qpos.y;
+
     const b2 = beta*beta;
     const eps = 1e-4;
+
     const D = (rx*rx + (1 - b2)*ry*ry) + eps;
     const coeff = (1 - b2) / Math.pow(D, 1.5);
+
     const Ex = coeff * rx;
     const Ey = coeff * ry;
+
+    // Bz = (v × E)_z ; v = (beta,0,0); E=(Ex,Ey,0) => v×E = (0,0,beta*Ey)
     const Bz = beta * Ey;
+
     return { Ex, Ey, Bz };
   }
+
   // Lorentz transform of E,B for boost along x with speed u = betaObs (c=1)
   // E_parallel' = E_parallel
-  // E_perp' = γ (E_perp + u × B)
+  // E_perp' = γ (E_perp + u × B)  (careful with sign conventions; here u is boost velocity of new frame relative old)
   // B_parallel' = B_parallel
   // B_perp' = γ (B_perp - u × E)
+  //
   // With boost along x: u=(u,0,0). Fields in our slice: E=(Ex,Ey,0), B=(0,0,Bz)
   // u×B = (u,0,0)×(0,0,Bz) = (0, -u*Bz, 0)
   // u×E = (u,0,0)×(Ex,Ey,0) = (0,0,u*Ey)
+  //
   // So:
   // Ex' = Ex
-  // Ey' = γ (Ey - u*Bz)
-  // Bz' = γ (Bz - u*Ey)
+  // Ey' = γ (Ey + (u×B)_y) = γ (Ey - u*Bz)
+  // Bz' = γ (Bz - (u×E)_z) = γ (Bz - u*Ey)
   function boostAlongX(betaObs, Ex, Ey, Bz){
     const g = gamma(betaObs);
     const ExP = Ex;
@@ -329,6 +353,7 @@
     const BzP = g * (Bz - betaObs * Ey);
     return { Ex: ExP, Ey: EyP, Bz: BzP };
   }
+
   function drawGrid(ctx, canvas){
     const W=canvas.width, H=canvas.height;
     ctx.save();
@@ -346,22 +371,28 @@
     }
     ctx.restore();
   }
+
   function arrow(ctx, x, y, vx, vy, color){
     const len = Math.hypot(vx,vy);
     if (len < 1e-6) return;
     const ux = vx/len, uy = vy/len;
+
     ctx.save();
     ctx.strokeStyle = color;
     ctx.fillStyle = color;
     ctx.lineWidth = 2;
     ctx.globalAlpha = 0.9;
+
     const L = Math.min(18, len);
     const x2 = x + ux*L;
-    const y2 = y - uy*L;
+    const y2 = y - uy*L; // canvas y down
+
     ctx.beginPath();
     ctx.moveTo(x,y);
     ctx.lineTo(x2,y2);
     ctx.stroke();
+
+    // head
     const ah=6, aw=4;
     const hx = x2, hy = y2;
     const px = -uy, py = ux;
@@ -373,6 +404,7 @@
     ctx.fill();
     ctx.restore();
   }
+
   function drawCharge(ctx, canvas, qpos){
     const p = w2c(canvas, qpos.x, qpos.y);
     ctx.save();
@@ -385,6 +417,7 @@
     ctx.stroke();
     ctx.restore();
   }
+
   function drawProbe(ctx, canvas, probe){
     const p = w2c(canvas, probe.x, probe.y);
     ctx.save();
@@ -397,73 +430,94 @@
     ctx.stroke();
     ctx.restore();
   }
+
   function drawBdot(ctx, x, y, Bz){
+    // Out of page: + = ⊘, - = ⊗
     const col = getComputedStyle(document.documentElement).getPropertyValue('--orange').trim();
     ctx.save();
     ctx.font = "16px ui-monospace, Menlo, Consolas, monospace";
-    ctx.textAlign="center";
-    ctx.textBaseline="middle";
+    ctx.textAlign="center"; ctx.textBaseline="middle";
     ctx.fillStyle = col;
     ctx.globalAlpha = 0.85;
-    ctx.fillText(Bz >= 0 ? "⨀" : "⨂", x, y);
+    ctx.fillText(Bz >= 0 ? "⊘" : "⊗", x, y);
     ctx.restore();
   }
+
   let t0 = performance.now();
   function tick(now){
     const dt = (now - t0)/1000;
     t0 = now;
+
     const beta = parseFloat(betaEl.value);
     const betaObs = parseFloat(bObsEl.value);
     const density = parseInt(densEl.value, 10);
     const scale = parseFloat(scaleEl.value);
+
     betaTxt.textContent = beta.toFixed(2);
     bObsTxt.textContent = betaObs.toFixed(2);
     densTxt.textContent = density.toString();
     scaleTxt.textContent = scale.toFixed(2);
+
+    // Move charge back and forth (simple loop) for intuition
+    // Keep it within [-2.2, 2.2]
     const range = 2.2;
     if (!tick.qpos){
       tick.qpos = { x: -range, y: 0 };
       tick.dir = 1;
     }
     if (animEl.checked){
+      // speed in world units per second scaled by |beta|
       const vWorld = (0.8 + 1.4*Math.abs(beta)) * tick.dir;
       tick.qpos.x += vWorld * dt;
       if (tick.qpos.x > range){ tick.qpos.x = range; tick.dir = -1; }
       if (tick.qpos.x < -range){ tick.qpos.x = -range; tick.dir = 1; }
     }
     const qpos = tick.qpos;
+
+    // Clear canvases
     for (const [ctx, canvas] of [[ctxL,cLab],[ctxO,cObs]]){
       ctx.clearRect(0,0,canvas.width,canvas.height);
       if (showGridEl.checked) drawGrid(ctx, canvas);
     }
+
+    // Sample grid and draw E vectors + B dots
     const W = cLab.width, H = cLab.height;
     const stepX = W / density;
     const stepY = H / Math.round(density*0.65);
+
     const blue = getComputedStyle(document.documentElement).getPropertyValue('--blue').trim();
+
     function drawPanel(ctx, canvas, mode){
       for(let Y=stepY/2; Y<H; Y+=stepY){
         for(let X=stepX/2; X<W; X+=stepX){
           const w = c2w(canvas, X, Y);
           const f = fieldsLabAtPoint(beta, qpos, w.x, w.y);
+
           let Ex=f.Ex, Ey=f.Ey, Bz=f.Bz;
           if (mode === "obs"){
             const fp = boostAlongX(betaObs, Ex, Ey, Bz);
             Ex = fp.Ex; Ey = fp.Ey; Bz = fp.Bz;
           }
+
+          // Visual scaling (cap arrows)
           const magE = Math.hypot(Ex,Ey);
-          const k = scale * 22 / (1 + 6*magE);
+          const k = scale * 22 / (1 + 6*magE); // compress huge values near charge
           if (showEEl.checked){
             arrow(ctx, X, Y, Ex*k, Ey*k, blue);
           }
           if (showBEl.checked){
+            // place B dots every other grid point to avoid clutter
             if (((Math.floor(X/stepX)+Math.floor(Y/stepY)) % 2) === 0){
               drawBdot(ctx, X, Y, Bz);
             }
           }
         }
       }
+
       drawCharge(ctx, canvas, qpos);
       drawProbe(ctx, canvas, probe);
+
+      // Draw a local E arrow at probe for clarity
       const p = w2c(canvas, probe.x, probe.y);
       const f0 = fieldsLabAtPoint(beta, qpos, probe.x, probe.y);
       let Ex=f0.Ex, Ey=f0.Ey, Bz=f0.Bz;
@@ -480,20 +534,26 @@
         drawBdot(ctx, p.X+22, p.Y-18, Bz);
       }
     }
+
     drawPanel(ctxL, cLab, "lab");
     drawPanel(ctxO, cObs, "obs");
+
+    // Readouts at probe
     const fLab = fieldsLabAtPoint(beta, qpos, probe.x, probe.y);
     const fObs = boostAlongX(betaObs, fLab.Ex, fLab.Ey, fLab.Bz);
+
     const EL = Math.hypot(fLab.Ex,fLab.Ey);
     const EO = Math.hypot(fObs.Ex,fObs.Ey);
+
     pTxt.textContent = `${probe.x.toFixed(2)}, ${probe.y.toFixed(2)}`;
     qTxt.textContent = `${qpos.x.toFixed(2)}, ${qpos.y.toFixed(2)}`;
     labTxt.textContent = `|E|=${EL.toFixed(3)}  Bz=${fLab.Bz.toFixed(3)}`;
     obsTxt.textContent = `|E'|=${EO.toFixed(3)}  Bz'=${fObs.Bz.toFixed(3)}`;
+
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
 })();
-  </script>
+</script>
 </body>
 </html>
