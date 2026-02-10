@@ -383,8 +383,10 @@
     ctx.strokeStyle = color;
     ctx.fillStyle = color;
     // Further thicken the arrow lines to improve visibility on high resolution displays
-    // Further thicken the arrow lines to improve visibility on high resolution displays
-    ctx.lineWidth = 3;
+    // Further increase the line width for arrows so they remain prominent on
+    // high‑resolution displays. The extra thickness helps differentiate
+    // vectors from small dots and the grid.
+    ctx.lineWidth = 4;
     ctx.globalAlpha = 0.9;
 
     // Determine arrow length with minimum and maximum limits.
