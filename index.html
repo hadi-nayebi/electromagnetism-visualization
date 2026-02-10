@@ -373,9 +373,11 @@
   }
 
   function arrow(ctx, x, y, vx, vy, color){
-    const len = Math.hypot(vx,vy);
+    const len = Math.hypot(vx, vy);
+    // Skip if the vector is essentially zero
     if (len < 1e-6) return;
-    const ux = vx/len, uy = vy/len;
+    // Unit direction of the vector
+    const ux = vx / len, uy = vy / len;
 
     ctx.save();
     ctx.strokeStyle = color;
@@ -383,23 +385,32 @@
     ctx.lineWidth = 2;
     ctx.globalAlpha = 0.9;
 
-    const L = Math.min(18, len);
-    const x2 = x + ux*L;
-    const y2 = y - uy*L; // canvas y down
+    // Determine arrow length with minimum and maximum limits.
+    // This prevents very small field vectors from rendering as tiny points and
+    // keeps large vectors from having excessively long arrows.
+    const minL = 8;
+    const maxL = 18;
+    const L = Math.max(minL, Math.min(maxL, len));
 
+    // End point of the arrow shaft
+    const x2 = x + ux * L;
+    const y2 = y - uy * L; // canvas y down
+
+    // Draw the arrow shaft
     ctx.beginPath();
-    ctx.moveTo(x,y);
-    ctx.lineTo(x2,y2);
+    ctx.moveTo(x, y);
+    ctx.lineTo(x2, y2);
     ctx.stroke();
 
-    // head
-    const ah=6, aw=4;
+    // Arrow head size scales with arrow length
+    const ah = Math.min(6, L * 0.3);
+    const aw = ah * 0.6;
     const hx = x2, hy = y2;
     const px = -uy, py = ux;
     ctx.beginPath();
     ctx.moveTo(hx, hy);
-    ctx.lineTo(hx - ux*ah + px*aw, hy + uy*ah - py*aw);
-    ctx.lineTo(hx - ux*ah - px*aw, hy + uy*ah + py*aw);
+    ctx.lineTo(hx - ux * ah + px * aw, hy + uy * ah - py * aw);
+    ctx.lineTo(hx - ux * ah - px * aw, hy + uy * ah + py * aw);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
