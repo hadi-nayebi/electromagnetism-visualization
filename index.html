@@ -382,14 +382,16 @@
     ctx.save();
     ctx.strokeStyle = color;
     ctx.fillStyle = color;
-    ctx.lineWidth = 2;
+    // Slightly thicken the arrow lines to improve visibility on high resolution displays
+    ctx.lineWidth = 2.5;
     ctx.globalAlpha = 0.9;
 
     // Determine arrow length with minimum and maximum limits.
     // This prevents very small field vectors from rendering as tiny points and
-    // keeps large vectors from having excessively long arrows.
-    const minL = 8;
-    const maxL = 18;
+    // keeps large vectors from having excessively long arrows. Increase the
+    // minimum and maximum to make small arrows more visible.
+    const minL = 10;
+    const maxL = 22;
     const L = Math.max(minL, Math.min(maxL, len));
 
     // End point of the arrow shaft
@@ -402,9 +404,10 @@
     ctx.lineTo(x2, y2);
     ctx.stroke();
 
-    // Arrow head size scales with arrow length
-    const ah = Math.min(6, L * 0.3);
-    const aw = ah * 0.6;
+    // Arrow head size scales with arrow length. Increase the head
+    // proportions slightly to improve visibility on small arrows.
+    const ah = Math.min(8, L * 0.35);
+    const aw = ah * 0.55;
     const hx = x2, hy = y2;
     const px = -uy, py = ux;
     ctx.beginPath();
@@ -446,11 +449,14 @@
     // Out of page: + = ⊘, - = ⊗
     const col = getComputedStyle(document.documentElement).getPropertyValue('--orange').trim();
     ctx.save();
-    ctx.font = "16px ui-monospace, Menlo, Consolas, monospace";
+    // Increase font size for magnetic field dots to improve visibility
+    ctx.font = "20px ui-monospace, Menlo, Consolas, monospace";
     ctx.textAlign="center"; ctx.textBaseline="middle";
     ctx.fillStyle = col;
-    ctx.globalAlpha = 0.85;
-    ctx.fillText(Bz >= 0 ? "⊘" : "⊗", x, y);
+    // Slightly higher opacity for better contrast
+    ctx.globalAlpha = 0.95;
+    // Use more standard EM symbols for into/out-of-plane magnetic field
+    ctx.fillText(Bz >= 0 ? "⨀" : "⨂", x, y);
     ctx.restore();
   }
 
@@ -512,7 +518,9 @@
 
           // Visual scaling (cap arrows)
           const magE = Math.hypot(Ex,Ey);
-          const k = scale * 22 / (1 + 6*magE); // compress huge values near charge
+          // Visual scaling (cap arrows). Increase the scaling factor and adjust the
+          // denominator so that even small fields produce visible arrows.
+          const k = scale * 30 / (1 + 5 * magE); // compress huge values near charge
           if (showEEl.checked){
             arrow(ctx, X, Y, Ex*k, Ey*k, blue);
           }
@@ -537,7 +545,9 @@
         Ex=fp.Ex; Ey=fp.Ey; Bz=fp.Bz;
       }
       const magE = Math.hypot(Ex,Ey);
-      const k2 = scale * 60 / (1 + 3*magE);
+      // Scale factor for the probe arrow. Increase constants to make the probe arrow
+      // stand out and ensure small fields remain visible.
+      const k2 = scale * 80 / (1 + 4 * magE);
       if (showEEl.checked){
         arrow(ctx, p.X, p.Y, Ex*k2, Ey*k2, "#61d67a");
       }
