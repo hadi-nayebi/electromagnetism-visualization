@@ -525,9 +525,10 @@
 
           // Visual scaling (cap arrows)
           const magE = Math.hypot(Ex,Ey);
-          // Visual scaling (cap arrows). Increase the scaling factor and adjust the
-          // denominator so that even small fields produce visible arrows.
-          const k = scale * 30 / (1 + 5 * magE); // compress huge values near charge
+          // Visual scaling (cap arrows). Increase the scaling factor further and
+          // reduce the denominator so that even small field magnitudes produce
+          // longer arrows. This helps avoid vectors collapsing into points.
+          const k = scale * 40 / (1 + 3 * magE);
           if (showEEl.checked){
             arrow(ctx, X, Y, Ex*k, Ey*k, blue);
           }
@@ -552,9 +553,10 @@
         Ex=fp.Ex; Ey=fp.Ey; Bz=fp.Bz;
       }
       const magE = Math.hypot(Ex,Ey);
-      // Scale factor for the probe arrow. Increase constants to make the probe arrow
-      // stand out and ensure small fields remain visible.
-      const k2 = scale * 80 / (1 + 4 * magE);
+      // Scale factor for the probe arrow. Increase constants further and reduce the
+      // denominator to make the probe arrow stand out and ensure small fields
+      // remain visible.
+      const k2 = scale * 100 / (1 + 3 * magE);
       if (showEEl.checked){
         arrow(ctx, p.X, p.Y, Ex*k2, Ey*k2, "#61d67a");
       }
