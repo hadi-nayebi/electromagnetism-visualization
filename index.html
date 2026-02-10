@@ -383,6 +383,7 @@
     ctx.strokeStyle = color;
     ctx.fillStyle = color;
     // Further thicken the arrow lines to improve visibility on high resolution displays
+    // Further thicken the arrow lines to improve visibility on high resolution displays
     ctx.lineWidth = 3;
     ctx.globalAlpha = 0.9;
 
@@ -390,8 +391,11 @@
     // This prevents very small field vectors from rendering as tiny points and
     // keeps large vectors from having excessively long arrows. Increase the
     // minimum and maximum to make small arrows more visible.
-    const minL = 10;
-    const maxL = 22;
+    // Increase minimum and maximum arrow lengths to make arrows much more visible
+    // even when the scaled field vector is small. This ensures vectors don't
+    // collapse into tiny points on the canvas.
+    const minL = 12;
+    const maxL = 28;
     const L = Math.max(minL, Math.min(maxL, len));
 
     // End point of the arrow shaft
@@ -406,8 +410,11 @@
 
     // Arrow head size scales with arrow length. Increase the head
     // proportions slightly to improve visibility on small arrows.
-    const ah = Math.min(8, L * 0.35);
-    const aw = ah * 0.55;
+    // Increase arrow head size and relative proportions so that head remains
+    // noticeable even for small arrows. The arrow head scales linearly with
+    // length but is capped at a larger absolute size than before.
+    const ah = Math.min(10, L * 0.4);
+    const aw = ah * 0.6;
     const hx = x2, hy = y2;
     const px = -uy, py = ux;
     ctx.beginPath();
