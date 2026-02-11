@@ -144,7 +144,22 @@
       .readout{ grid-template-columns:1fr; }
       canvas{ height:380px; }
     }
+
+    /* Styles for the 3D visualization canvas */
+    #c3d {
+      width: 100%;
+      height: 460px;
+      background: #0a0f1a;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      display: block;
+      margin-top: 12px;
+    }
   </style>
+
+  <!-- Import Three.js and OrbitControls for the 3D visualization. Using specific versions via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/examples/js/controls/OrbitControls.min.js"></script>
 </head>
 <body>
   <div class="wrap">
@@ -225,6 +240,10 @@
         B appears automatically from motion (not a separate knob). Now move β<sub>obs</sub>:
         the observer frame mixes E and B. At β<sub>obs</sub> ≈ β, the charge is nearly at rest and B’ tends toward zero.
       </div>
+
+      <!-- 3D visualization of the fields at the probe position -->
+      <div class="sub" style="margin:10px 0 6px 4px;">3D view at probe: lab (blue/orange) vs observer (green/orange)</div>
+      <canvas id="c3d" width="900" height="460"></canvas>
     </div>
   </div>
 
@@ -237,6 +256,46 @@
   const cObs = document.getElementById("cObs");
   const ctxL = cLab.getContext("2d");
   const ctxO = cObs.getContext("2d");
+
+  // --- 3D visualization setup ---
+  // A WebGL canvas (c3d) is used to visualize the E and B vectors at the probe point
+  // in three dimensions. We import Three.js and OrbitControls in the page head. The
+  // scene contains four arrows: two for the lab frame (E and B) and two for the
+  // observer frame. B arrows always point along ±z (out of plane); E arrows lie
+  // in the x–y plane. The arrow lengths are proportional to field strength.
+  const c3dEl = document.getElementById("c3d");
+  let renderer3D, scene3D, camera3D, controls3D;
+  let eLabArrow3D, bLabArrow3D, eObsArrow3D, bObsArrow3D;
+  if (c3dEl && typeof THREE !== 'undefined') {
+    scene3D = new THREE.Scene();
+    const width3D  = c3dEl.clientWidth;
+    const height3D = c3dEl.clientHeight;
+    camera3D = new THREE.PerspectiveCamera(45, width3D / height3D, 0.1, 100);
+    camera3D.position.set(3.5, 3.0, 3.5);
+    scene3D.add(new THREE.AxesHelper(1.5));
+    renderer3D = new THREE.WebGLRenderer({ canvas: c3dEl, antialias: true, alpha: true });
+    renderer3D.setSize(width3D, height3D);
+    controls3D = new THREE.OrbitControls(camera3D, renderer3D.domElement);
+    controls3D.enableDamping = true;
+    controls3D.dampingFactor = 0.12;
+    controls3D.rotateSpeed = 0.6;
+
+    const origin3D = new THREE.Vector3(0, 0, 0);
+    // Colours from CSS variables converted to hex
+    const blueHex   = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--blue').trim().replace('#',''), 16);
+    const orangeHex = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--orange').trim().replace('#',''), 16);
+    const greenHex  = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--good').trim().replace('#',''), 16);
+
+    // Initialize the arrows with tiny length; direction will be updated each frame
+    eLabArrow3D = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), origin3D, 0.001, blueHex);
+    bLabArrow3D = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), origin3D, 0.001, orangeHex);
+    eObsArrow3D = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), origin3D, 0.001, greenHex);
+    bObsArrow3D = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1), origin3D, 0.001, orangeHex);
+    scene3D.add(eLabArrow3D);
+    scene3D.add(bLabArrow3D);
+    scene3D.add(eObsArrow3D);
+    scene3D.add(bObsArrow3D);
+  }
 
   const betaEl = document.getElementById("beta");
   const bObsEl = document.getElementById("bObs");
@@ -581,6 +640,45 @@
     qTxt.textContent = `${qpos.x.toFixed(2)}, ${qpos.y.toFixed(2)}`;
     labTxt.textContent = `|E|=${EL.toFixed(3)}  Bz=${fLab.Bz.toFixed(3)}`;
     obsTxt.textContent = `|E'|=${EO.toFixed(3)}  Bz'=${fObs.Bz.toFixed(3)}`;
+
+    // Update 3D arrows representing the fields at the probe. Only if 3D scene is initialized.
+    if (scene3D && renderer3D) {
+      // Convert field vectors into THREE vectors
+      const scale3d = 0.8; // adjust this for arrow length scaling
+      const eLabVec = new THREE.Vector3(fLab.Ex, fLab.Ey, 0);
+      const bLabVec = new THREE.Vector3(0, 0, fLab.Bz);
+      const eObsVec = new THREE.Vector3(fObs.Ex, fObs.Ey, 0);
+      const bObsVec = new THREE.Vector3(0, 0, fObs.Bz);
+      // Ensure non-zero direction to avoid NaNs when normalizing
+      const safeVec = (vec) => {
+        if (vec.length() < 1e-6) { return new THREE.Vector3(0, 0, 0.0001); }
+        return vec;
+      };
+      // Helper to update an arrow given a vector
+      const updateArrow = (arrow, vec) => {
+        const v = safeVec(vec);
+        arrow.setDirection(v.clone().normalize());
+        arrow.setLength(v.length() * scale3d);
+      };
+
+      updateArrow(eLabArrow3D, eLabVec);
+      // B arrows always point along ±z; their magnitude is |B_z|
+      if (Math.abs(bLabVec.z) < 1e-6) {
+        bLabArrow3D.setLength(0.001);
+      } else {
+        bLabArrow3D.setDirection(new THREE.Vector3(0, 0, Math.sign(bLabVec.z)));
+        bLabArrow3D.setLength(Math.abs(bLabVec.z) * scale3d);
+      }
+      updateArrow(eObsArrow3D, eObsVec);
+      if (Math.abs(bObsVec.z) < 1e-6) {
+        bObsArrow3D.setLength(0.001);
+      } else {
+        bObsArrow3D.setDirection(new THREE.Vector3(0, 0, Math.sign(bObsVec.z)));
+        bObsArrow3D.setLength(Math.abs(bObsVec.z) * scale3d);
+      }
+      controls3D.update();
+      renderer3D.render(scene3D, camera3D);
+    }
 
     requestAnimationFrame(tick);
   }
